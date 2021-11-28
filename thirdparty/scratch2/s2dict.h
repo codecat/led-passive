@@ -267,7 +267,7 @@ namespace s2
 				add_pair(key, value);
 				return;
 			}
-			p->m_key = value;
+			p->m_value = value;
 		}
 
 		void remove(const TKey &key)

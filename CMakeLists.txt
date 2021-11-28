@@ -6,6 +6,8 @@ add_executable(led-passive
 	src/main.cpp
 	src/Common.cpp
 	src/Buffer.cpp
+	src/Config.cpp
+	src/Program.cpp
 )
 
 add_subdirectory(thirdparty/serial)

@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
+#include <ctime>
+#include <cassert>
 
 #include <s2string.h>
 #include <s2list.h>
