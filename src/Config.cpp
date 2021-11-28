@@ -191,7 +191,7 @@ void cfg::block::loadFromFile(FILE* fh)
 				newBlock->m_name = bufferName;
 				newBlock->loadFromFile(fh);
 				m_blocks.add(newBlock);
-				printf("Block: \"%s\" (%d values, %d blocks)\n", bufferName.c_str(), (int)newBlock->m_values.len(), (int)newBlock->m_blocks.len());
+				//printf("Block: \"%s\" (%d values, %d blocks)\n", bufferName.c_str(), (int)newBlock->m_values.len(), (int)newBlock->m_blocks.len());
 				bufferName = "";
 				continue;
 			}
