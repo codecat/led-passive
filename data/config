@@ -8,7 +8,6 @@ strips {
 }
 
 scenes {
-	default {
-		script = "scripts/test.lua"
-	}
+	default {}
+	test { script = "scripts/test.lua" }
 }

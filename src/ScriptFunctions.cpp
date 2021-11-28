@@ -2,6 +2,91 @@
 
 #include <Program.h>
 
+void script::registerFunctions(lua_State* L)
+{
+	// set_scene(name)
+	lua_pushcfunction(L, script::setScene, "set_scene");
+	lua_setglobal(L, "set_scene");
+
+	// next_scene()
+	lua_pushcfunction(L, script::nextScene, "next_scene");
+	lua_setglobal(L, "next_scene");
+
+	// prev_scene()
+	lua_pushcfunction(L, script::prevScene, "prev_scene");
+	lua_setglobal(L, "prev_scene");
+
+	// reset_frame_counter()
+	lua_pushcfunction(L, script::resetFrameCounter, "reset_frame_counter");
+	lua_setglobal(L, "reset_frame_counter");
+
+	// set_fps(fps)
+	lua_pushcfunction(L, script::setFps, "set_fps");
+	lua_setglobal(L, "set_fps");
+
+	// clear(r, g, b)
+	// clear(strip, r, g, b)
+	lua_pushcfunction(L, script::clear, "clear");
+	lua_setglobal(L, "clear");
+
+	// set(pixel, r, g, b)
+	// set(strip, pixel, r, g, b)
+	lua_pushcfunction(L, script::set, "set");
+	lua_setglobal(L, "set");
+}
+
+int script::setScene(lua_State* L)
+{
+	const char* name = lua_tostring(L, 1);
+	if (name == nullptr) {
+		lua_pushstring(L, "no scene name given");
+		lua_error(L);
+		return 0;
+	}
+
+	auto scene = Program::instance->getScene(name);
+	if (scene == nullptr) {
+		lua_pushstring(L, "scene with name not found");
+		lua_error(L);
+		return 0;
+	}
+
+	Program::instance->setCurrentScene(name);
+
+	return 0;
+}
+
+int script::nextScene(lua_State* L)
+{
+	Program::instance->advanceCurrentScene(1);
+	return 0;
+}
+
+int script::prevScene(lua_State* L)
+{
+	Program::instance->advanceCurrentScene(-1);
+	return 0;
+}
+
+int script::setFps(lua_State* L)
+{
+	int fps = lua_tointeger(L, 1);
+	if (fps < 1) {
+		lua_pushstring(L, "fps must be at least 1 or higher");
+		lua_error(L);
+		return 0;
+	}
+
+	Program::instance->m_fps = fps;
+	return 0;
+}
+
+int script::resetFrameCounter(lua_State* L)
+{
+	Program::instance->m_frameCount = 0;
+	return 0;
+}
+
 int script::clear(lua_State* L)
 {
 	int strip = -1;
@@ -71,10 +156,7 @@ int script::set(lua_State* L)
 
 	if (strip == -1) {
 		for (auto s : Program::instance->m_strips) {
-			auto& p = s->m_pixels[pixel];
-			p.r = r;
-			p.g = g;
-			p.b = b;
+			s->set(pixel, r, g, b);
 		}
 		return 0;
 	}
@@ -86,10 +168,7 @@ int script::set(lua_State* L)
 	}
 
 	auto s = Program::instance->m_strips[strip];
-	auto& p = s->m_pixels[pixel];
-	p.r = r;
-	p.g = g;
-	p.b = b;
+	s->set(pixel, r, g, b);
 
 	return 0;
 }
