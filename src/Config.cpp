@@ -91,9 +91,12 @@ void cfg::block::loadFromFile(FILE* fh)
 					}
 
 					if (cc == '"') {
-						// End of string, find end of line/file
+						// End of string, find end of file, line, or block
 						while (!feof(fh)) {
-							if (fgetc(fh) == '\n') {
+							char ccc = fgetc(fh);
+							if (ccc == '\n' || ccc == '}') {
+								// Seek back 1 character so the end of line or block can be handled below
+								fseek(fh, -1, SEEK_CUR);
 								break;
 							}
 						}
@@ -188,7 +191,7 @@ void cfg::block::loadFromFile(FILE* fh)
 				newBlock->m_name = bufferName;
 				newBlock->loadFromFile(fh);
 				m_blocks.add(newBlock);
-				//printf("Block: \"%s\" (%d values, %d blocks)\n", bufferName.c_str(), (int)newBlock->m_values.len(), (int)newBlock->m_blocks.len());
+				printf("Block: \"%s\" (%d values, %d blocks)\n", bufferName.c_str(), (int)newBlock->m_values.len(), (int)newBlock->m_blocks.len());
 				bufferName = "";
 				continue;
 			}
