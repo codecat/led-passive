@@ -216,7 +216,9 @@ bool Program::initialize()
 		int numScenes = blockScenes->getBlockCount();
 		for (int i = 0; i < numScenes; i++) {
 			auto blockScene = blockScenes->getBlock(i);
-			m_scenes.add(new Scene(blockScene));
+			auto newScene = new Scene(blockScene);
+			m_scenes.add(newScene);
+			printf("Added scene: \"%s\"\n", newScene->m_name.c_str());
 		}
 	}
 
