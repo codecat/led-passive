@@ -44,6 +44,8 @@ scenes {
 ```
 
 ## Scripting
+Lua scripts should return a function that will be called every frame. In this function you can set color values.
+
 Use `entr` to automatically restart the server every time the config is changed, or a script is changed.
 
 ```
