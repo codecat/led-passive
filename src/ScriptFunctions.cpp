@@ -77,7 +77,7 @@ int script::setScene(lua_State* L)
 
 	auto scene = Program::instance->getScene(name);
 	if (scene == nullptr) {
-		lua_pushstring(L, "scene with name not found");
+		lua_pushstring(L, s2::strprintf("scene with name '%s' not found", name));
 		lua_error(L);
 		return 0;
 	}
