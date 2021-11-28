@@ -1,3 +1,6 @@
 [submodule "thirdparty/serial"]
 	path = thirdparty/serial
 	url = https://github.com/iitaakash/serial.git
+[submodule "thirdparty/luau"]
+	path = thirdparty/luau
+	url = https://github.com/Roblox/luau.git

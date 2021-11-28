@@ -12,7 +12,7 @@ build-arm:
 deploy: cross-build
 	-ssh $(DEPLOY_USER)@$(DEPLOY_IP) "killall led-passive"
 	scp build-arm/led-passive $(DEPLOY_USER)@$(DEPLOY_IP):$(DEPLOY_TARGET)/
-	scp config $(DEPLOY_USER)@$(DEPLOY_IP):$(DEPLOY_TARGET)/
+	scp -r data/* $(DEPLOY_USER)@$(DEPLOY_IP):$(DEPLOY_TARGET)/
 
 test: deploy
 	ssh -t $(DEPLOY_USER)@$(DEPLOY_IP) "cd $(DEPLOY_TARGET); ./led-passive"

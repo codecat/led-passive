@@ -49,13 +49,19 @@ namespace cfg
 	class block
 	{
 	private:
+		s2::string m_name;
 		s2::dict<s2::string, value> m_values;
-		s2::dict<s2::string, block*> m_blocks;
+		s2::list<block*> m_blocks;
 
 	public:
 		~block();
 
+		const char* getName();
+
 		block* getBlock(const char* name);
+		block* getBlock(int index);
+		int getBlockCount();
+
 		int getInt(const char* name, int def = 0);
 		float getFloat(const char* name, float def = 0.0f);
 		const char* getString(const char* name, const char* def = nullptr);

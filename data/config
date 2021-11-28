@@ -1,0 +1,14 @@
+port = "/dev/ttyACM0"
+fps = 30
+script = "scripts/main.lua"
+
+strips {
+	{ pixels = 300 }
+	{ pixels = 300 }
+}
+
+scenes {
+	default {
+		script = "scripts/test.lua"
+	}
+}
