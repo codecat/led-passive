@@ -14,6 +14,7 @@ namespace script
 	int nextScene(lua_State* L);
 	int prevScene(lua_State* L);
 
+	int getFps(lua_State* L);
 	int setFps(lua_State* L);
 	int resetFrameCounter(lua_State* L);
 

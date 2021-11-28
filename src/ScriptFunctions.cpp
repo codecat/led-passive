@@ -95,6 +95,12 @@ int script::prevScene(lua_State* L)
 	return 0;
 }
 
+int script::getFps(lua_State* L)
+{
+	lua_pushinteger(L, Program::instance->m_fps);
+	return 1;
+}
+
 int script::setFps(lua_State* L)
 {
 	int fps = lua_tointeger(L, 1);
