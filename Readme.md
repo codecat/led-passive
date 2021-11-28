@@ -7,6 +7,29 @@ Scriptable LED server that you can just keep running all the time on a Raspberry
 	* I use a [Teensy 4.0](https://www.pjrc.com/store/teensy40.html) with [OctoWS2811](https://www.pjrc.com/teensy/td_libs_OctoWS2811.html) and [this program](https://gist.github.com/codecat/6126ff59a0d24a6b86d4d9f89336efa2)
 * [WS2811](https://www.amazon.com/WS2811/s?k=WS2811) addressable LED's (or anything else that you can control with OPC over serial)
 
+## Building
+Make sure you pull the git submodules first.
+
+By default, the makefile is configured for cross-compiling from a Linux machine to a Raspberry Pi, where the binary is deployed over SSH. As a result, building might be easier using CMake directly on a Raspberry Pi, although it might take a little bit longer.
+
+```
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+```
+
+## Running
+Copy all files from the `data` folder so that they are next to the `led-passive` binary. For example, you should have this file structure:
+
+* `led-passive`
+* `config`
+* `scripts/`
+
+You might want to change the `config` file so you're using the right serial port and such.
+
+Then simply run `./led-passive` to run the server. You can run this in a detached tmux screen too, if you like.
+
 ## Configuration
 The configuration is built from a series of blocks. Here's an example configuration file showing the most commonly used options:
 
