@@ -24,6 +24,10 @@ void script::registerFunctions(lua_State* L)
 	lua_pushcfunction(L, script::resetFrameCounter, "reset_frame_counter");
 	lua_setglobal(L, "reset_frame_counter");
 
+	// get_fps()
+	lua_pushcfunction(L, script::getFps, "get_fps");
+	lua_setglobal(L, "get_fps");
+
 	// set_fps(fps)
 	lua_pushcfunction(L, script::setFps, "set_fps");
 	lua_setglobal(L, "set_fps");
