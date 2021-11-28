@@ -82,6 +82,7 @@ The following functions are available to Lua:
 * `next_scene()` switches to the next scene
 * `prev_scene()` switches to the previous scene
 * `reset_frame_counter()` resets the frame counter passed to update functions
+* `get_fps()` returns the target FPS
 * `set_fps(fps)` sets the target FPS
 * `clear(r, g, b)` clears all strips with the a color
 * `clear(strip, r, g, b)` clears the given strip with a color
