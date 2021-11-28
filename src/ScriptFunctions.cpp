@@ -4,6 +4,10 @@
 
 void script::registerFunctions(lua_State* L)
 {
+	// dofile(path)
+	lua_pushcfunction(L, script::dofile, "dofile");
+	lua_setglobal(L, "dofile");
+
 	// set_scene(name)
 	lua_pushcfunction(L, script::setScene, "set_scene");
 	lua_setglobal(L, "set_scene");
@@ -33,6 +37,29 @@ void script::registerFunctions(lua_State* L)
 	// set(strip, pixel, r, g, b)
 	lua_pushcfunction(L, script::set, "set");
 	lua_setglobal(L, "set");
+}
+
+int script::dofile(lua_State* L)
+{
+	const char* path = lua_tostring(L, 1);
+	if (path == nullptr) {
+		lua_pushstring(L, "no path given");
+		lua_error(L);
+		return 0;
+	}
+
+	Program::instance->loadLuaFile(path);
+
+	int r = lua_pcall(L, 0, 1, 0);
+	if (r != 0) {
+		const char* err = lua_tostring(L, -1);
+		printf("[LUA] %s\n", err);
+		lua_pop(L, 1);
+		return 0;
+	}
+
+	// Return value will already be on the stack at this point, so we can return 1
+	return 1;
 }
 
 int script::setScene(lua_State* L)

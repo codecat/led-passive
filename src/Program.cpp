@@ -110,12 +110,12 @@ void Program::advanceCurrentScene(int dir)
 	setCurrentScene(m_scenes[index]);
 }
 
-int Program::runLuaFile(const char* filename)
+bool Program::loadLuaFile(const char* filename)
 {
 	FILE* fh = fopen(filename, "rb");
 	if (fh == nullptr) {
 		printf("[LUA] Unable to open file \"%s\"\n", filename);
-		return LUA_REFNIL;
+		return false;
 	}
 
 	fseek(fh, 0, SEEK_END);
@@ -136,10 +136,19 @@ int Program::runLuaFile(const char* filename)
 		const char* err = lua_tostring(m_lua, -1);
 		printf("[LUA] %s\n", err);
 		lua_pop(m_lua, 1);
+		return false;
+	}
+
+	return true;
+}
+
+int Program::runLuaFile(const char* filename)
+{
+	if (!loadLuaFile(filename)) {
 		return LUA_REFNIL;
 	}
 
-	r = lua_pcall(m_lua, 0, 1, 0);
+	int r = lua_pcall(m_lua, 0, 1, 0);
 	if (r != 0) {
 		const char* err = lua_tostring(m_lua, -1);
 		printf("[LUA] %s\n", err);

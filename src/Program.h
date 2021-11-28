@@ -45,6 +45,7 @@ public:
 	void setCurrentScene(Scene* scene);
 	void advanceCurrentScene(int dir = 1);
 
+	bool loadLuaFile(const char* filename);
 	int runLuaFile(const char* filename);
 
 private:
