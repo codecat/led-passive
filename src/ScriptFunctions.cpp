@@ -41,6 +41,13 @@ void script::registerFunctions(lua_State* L)
 	// set(strip, pixel, r, g, b)
 	lua_pushcfunction(L, script::set, "set");
 	lua_setglobal(L, "set");
+
+	// hsv2rgb(h, s, v)
+	//   h: [0 .. 360]
+	//   s: [0 .. 1]
+	//   v: [0 .. 1]
+	lua_pushcfunction(L, script::hsv2rgb, "hsv2rgv");
+	lua_setglobal(L, "hsv2rgb");
 }
 
 int script::dofile(lua_State* L)
@@ -208,4 +215,46 @@ int script::set(lua_State* L)
 	s->set(pixel, r, g, b);
 
 	return 0;
+}
+
+int script::hsv2rgb(lua_State* L)
+{
+	double h = lua_tonumber(L, 1);
+	double s = lua_tonumber(L, 2);
+	double v = lua_tonumber(L, 3);
+
+	h += 90.0;
+	h *= M_PI / 180.0;
+
+	const double r1 = 0.0;
+	const double r2 = 1.0;
+
+	const double g1 = -sqrt(3.0) / 2.0;
+	const double g2 = -0.5;
+
+	const double b1 = sqrt(3.0) / 2.0;
+	const double b2 = -0.5;
+
+	double h1 = cos(h);
+	double h2 = sin(h);
+
+	// Hue
+	double r = h1*r1 + h2*r2;
+	double g = h1*g1 + h2*g2;
+	double b = h1*b1 + h2*b2;
+
+	// Saturation
+	r += (1.0 - r) * s;
+	g += (1.0 - g) * s;
+	b += (1.0 - b) * s;
+
+	// Value
+	r *= v;
+	g *= v;
+	b *= v;
+
+	lua_pushnumber(L, r * 255.0);
+	lua_pushnumber(L, g * 255.0);
+	lua_pushnumber(L, b * 255.0);
+	return 3;
 }

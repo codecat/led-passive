@@ -6,6 +6,7 @@
 #include <cstring>
 #include <ctime>
 #include <cassert>
+#include <cmath>
 
 #include <s2string.h>
 #include <s2list.h>
