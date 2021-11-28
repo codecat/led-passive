@@ -8,6 +8,7 @@ add_executable(led-passive
 	src/Common.cpp
 	src/Buffer.cpp
 	src/Config.cpp
+	src/Easing.cpp
 
 	src/Program.cpp
 	src/ScriptFunctions.cpp

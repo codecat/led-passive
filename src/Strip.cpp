@@ -8,6 +8,11 @@ Strip::Strip(cfg::block* block)
 	m_pixels = (PixelU8*)malloc(m_bufferSize);
 	m_numPixels = numPixels;
 
+	const char* curveName = block->getString("curve");
+	if (curveName != nullptr) {
+		m_pixelCurve = easing::parseTypeName(curveName);
+	}
+
 	int r = block->getInt("r");
 	int g = block->getInt("g");
 	int b = block->getInt("b");
@@ -21,6 +26,8 @@ Strip::~Strip()
 
 void Strip::clear(uint8_t r, uint8_t g, uint8_t b)
 {
+	transform(r, g, b);
+
 	for (size_t i = 0; i < m_numPixels; i++) {
 		auto& p = m_pixels[i];
 		p.r = r;
