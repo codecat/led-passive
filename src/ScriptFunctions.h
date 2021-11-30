@@ -20,6 +20,7 @@ namespace script
 
 	int clear(lua_State* L);
 	int set(lua_State* L);
+	int add(lua_State* L);
 
 	int hsv2rgb(lua_State* L);
 }
