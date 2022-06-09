@@ -8,6 +8,10 @@ void script::registerFunctions(lua_State* L)
 	lua_pushcfunction(L, script::dofile, "dofile");
 	lua_setglobal(L, "dofile");
 
+	// get_scene()
+	lua_pushcfunction(L, script::getScene, "get_scene");
+	lua_setglobal(L, "get_scene");
+
 	// set_scene(name)
 	lua_pushcfunction(L, script::setScene, "set_scene");
 	lua_setglobal(L, "set_scene");
@@ -75,6 +79,17 @@ int script::dofile(lua_State* L)
 	}
 
 	// Return value will already be on the stack at this point, so we can return 1
+	return 1;
+}
+
+int script::getScene(lua_State* L)
+{
+	auto scene = Program::instance->m_currentScene;
+	if (scene != nullptr) {
+		lua_pushstring(L, scene->m_name);
+	} else {
+		lua_pushstring(L, "");
+	}
 	return 1;
 }
 
