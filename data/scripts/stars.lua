@@ -1,9 +1,9 @@
 local stars = {}
-local star_hue = 300
-local star_hue_random = 50
+local star_hue = 200
+local star_hue_random = 150
 local star_hue_add = 0
 local star_per_time = 0
-local star_per_time_random = 4
+local star_per_time_random = 8
 local star_seconds = 0.1
 local star_speed = 4
 local star_speed_random = 10
@@ -95,7 +95,7 @@ return function(frame)
 		r = v.rgb.r * (v.value / 255)
 		g = v.rgb.g * (v.value / 255)
 		b = v.rgb.b * (v.value / 255)
-		add(v.strip, (v.pixel + frame * v.movement) % 300, r, g, b)
+		get_strip(v.strip):add((v.pixel + frame * v.movement) % 300, r, g, b)
 	end
 
 	for _, v in ipairs(remove) do
