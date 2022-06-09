@@ -1,6 +1,6 @@
 local width = 10
 local gap = 50
-local speed = 4
+local speed = 2
 local huestart = 0
 local huelen = 50
 local huespeed = 2
@@ -23,7 +23,7 @@ return function(frame)
 				if strip == 1 then
 					movepos = 299 - i
 				end
-				add(strip, movepos, r*v, g*v, b*v)
+				get_strip(strip):add(movepos, r*v, g*v, b*v)
 			end
 		end
 	end
