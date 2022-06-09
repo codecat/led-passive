@@ -3,10 +3,20 @@ fps = 30
 script = "scripts/main.lua"
 
 strips {
-	{ pixels = 300 }
-	{ pixels = 300 }
+	{
+		pixels = 300
+		curve = inCubic
+	}
+	{
+		pixels = 300
+		curve = inCubic
+	}
 }
 
 scenes {
-	default { script = "scripts/test.lua" }
+	default { script = "scripts/default.lua" }
+	stars { script = "scripts/stars.lua" }
+	#clock { script = "scripts/clock.lua" }
+	xmas { script = "scripts/xmas.lua" }
+	150 { script = "scripts/150.lua" }
 }
