@@ -62,6 +62,10 @@ void Program::run()
 		}
 
 		float sleepMilliseconds = fpsTargetSleep - frameTime;
+		if (sleepMilliseconds < 1) {
+			sleepMilliseconds = 1;
+		}
+
 #if defined(PLATFORM_WINDOWS)
 		Sleep((DWORD)sleepMilliseconds);
 #else
