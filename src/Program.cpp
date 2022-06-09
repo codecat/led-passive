@@ -194,8 +194,13 @@ bool Program::initialize()
 
 	const char* portName = m_config->getString("port");
 	if (portName == nullptr) {
-		portName = "/dev/ttyACM0";
-		printf("Missing port name, using default (\"%s\")\n", portName);
+#if defined(PLATFORM_WINDOWS)
+		const char* defaultPortName = "COM1";
+#else
+		const char* defaultPortName = "/dev/ttyACM0";
+#endif
+		printf("Missing \"port\" name, try something like \"%s\"\n", defaultPortName);
+		return false;
 	}
 
 	m_fps = m_config->getInt("fps", m_fps);
