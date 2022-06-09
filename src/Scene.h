@@ -12,6 +12,7 @@ public:
 	s2::string m_name;
 
 	PixelU8 m_clear;
+	s2::list<PixelU8> m_clearStrips;
 
 	int m_luaUpdate = LUA_REFNIL;
 
