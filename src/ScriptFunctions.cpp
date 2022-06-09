@@ -7,6 +7,7 @@
 static const luaL_Reg methods_strip[] = {
 	{"clear", script::strip::clear},
 	{"set", script::strip::set},
+	{"add", script::strip::add},
 	{NULL, NULL},
 };
 
@@ -53,17 +54,14 @@ void script::registerFunctions(lua_State* L)
 	lua_setglobal(L, "get_strip");
 
 	// clear(r, g, b)
-	// clear(strip, r, g, b)
 	lua_pushcfunction(L, script::clear, "clear");
 	lua_setglobal(L, "clear");
 
 	// set(pixel, r, g, b)
-	// set(strip, pixel, r, g, b)
 	lua_pushcfunction(L, script::set, "set");
 	lua_setglobal(L, "set");
 
 	// add(pixel, r, g, b)
-	// add(strip, pixel, r, g, b)
 	lua_pushcfunction(L, script::add, "add");
 	lua_setglobal(L, "add");
 
@@ -196,17 +194,10 @@ int script::getStrip(lua_State* L)
 
 int script::clear(lua_State* L)
 {
-	int strip = -1;
 	uint8_t r, g, b;
 
 	int n = lua_gettop(L);
-	if (n == 4) {
-		strip = lua_tointeger(L, 1);
-		r = (uint8_t)lua_tointeger(L, 2);
-		g = (uint8_t)lua_tointeger(L, 3);
-		b = (uint8_t)lua_tointeger(L, 4);
-
-	} else if (n == 3) {
+	if (n == 3) {
 		r = (uint8_t)lua_tointeger(L, 1);
 		g = (uint8_t)lua_tointeger(L, 2);
 		b = (uint8_t)lua_tointeger(L, 3);
@@ -217,39 +208,19 @@ int script::clear(lua_State* L)
 		return 0;
 	}
 
-	if (strip == -1) {
-		for (auto s : Program::instance->m_strips) {
-			s->clear(r, g, b);
-		}
-		return 0;
+	for (auto s : Program::instance->m_strips) {
+		s->clear(r, g, b);
 	}
-
-	if (strip < 0 || strip >= (int)Program::instance->m_strips.len()) {
-		lua_pushstring(L, "strip index out of range");
-		lua_error(L);
-		return 0;
-	}
-
-	Program::instance->m_strips[strip]->clear(r, g, b);
-
 	return 0;
 }
 
 int script::set(lua_State* L)
 {
-	int strip = -1;
 	int pixel;
 	uint8_t r, g, b;
 
 	int n = lua_gettop(L);
-	if (n == 5) {
-		strip = lua_tointeger(L, 1);
-		pixel = lua_tointeger(L, 2);
-		r = (uint8_t)lua_tointeger(L, 3);
-		g = (uint8_t)lua_tointeger(L, 4);
-		b = (uint8_t)lua_tointeger(L, 5);
-
-	} else if (n == 4) {
+	if (n == 4) {
 		pixel = lua_tointeger(L, 1);
 		r = (uint8_t)lua_tointeger(L, 2);
 		g = (uint8_t)lua_tointeger(L, 3);
@@ -261,40 +232,19 @@ int script::set(lua_State* L)
 		return 0;
 	}
 
-	if (strip == -1) {
-		for (auto s : Program::instance->m_strips) {
-			s->set(pixel, r, g, b);
-		}
-		return 0;
+	for (auto s : Program::instance->m_strips) {
+		s->set(pixel, r, g, b);
 	}
-
-	if (strip < 0 || strip >= (int)Program::instance->m_strips.len()) {
-		lua_pushstring(L, "strip index out of range");
-		lua_error(L);
-		return 0;
-	}
-
-	auto s = Program::instance->m_strips[strip];
-	s->set(pixel, r, g, b);
-
 	return 0;
 }
 
 int script::add(lua_State* L)
 {
-	int strip = -1;
 	int pixel;
 	uint8_t r, g, b;
 
 	int n = lua_gettop(L);
-	if (n == 5) {
-		strip = lua_tointeger(L, 1);
-		pixel = lua_tointeger(L, 2);
-		r = (uint8_t)lua_tointeger(L, 3);
-		g = (uint8_t)lua_tointeger(L, 4);
-		b = (uint8_t)lua_tointeger(L, 5);
-
-	} else if (n == 4) {
+	if (n == 4) {
 		pixel = lua_tointeger(L, 1);
 		r = (uint8_t)lua_tointeger(L, 2);
 		g = (uint8_t)lua_tointeger(L, 3);
@@ -306,22 +256,9 @@ int script::add(lua_State* L)
 		return 0;
 	}
 
-	if (strip == -1) {
-		for (auto s : Program::instance->m_strips) {
-			s->add(pixel, r, g, b);
-		}
-		return 0;
+	for (auto s : Program::instance->m_strips) {
+		s->add(pixel, r, g, b);
 	}
-
-	if (strip < 0 || strip >= (int)Program::instance->m_strips.len()) {
-		lua_pushstring(L, "strip index out of range");
-		lua_error(L);
-		return 0;
-	}
-
-	auto s = Program::instance->m_strips[strip];
-	s->add(pixel, r, g, b);
-
 	return 0;
 }
 
@@ -410,5 +347,29 @@ int script::strip::set(lua_State* L)
 	}
 
 	self->set(pixel, r, g, b);
+	return 0;
+}
+
+int script::strip::add(lua_State* L)
+{
+	Strip* self = (Strip*)lua_touserdata(L, 1);
+
+	int pixel;
+	uint8_t r, g, b;
+
+	int n = lua_gettop(L);
+	if (n == 5) {
+		pixel = lua_tointeger(L, 2);
+		r = (uint8_t)lua_tointeger(L, 3);
+		g = (uint8_t)lua_tointeger(L, 4);
+		b = (uint8_t)lua_tointeger(L, 5);
+
+	} else {
+		lua_pushstring(L, "invalid number of parameters");
+		lua_error(L);
+		return 0;
+	}
+
+	self->add(pixel, r, g, b);
 	return 0;
 }
