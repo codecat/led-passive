@@ -2,6 +2,14 @@
 
 #include <Program.h>
 
+#include <lualib.h>
+
+static const luaL_Reg methods_strip[] = {
+	{"clear", script::strip::clear},
+	{"set", script::strip::set},
+	{NULL, NULL},
+};
+
 void script::registerFunctions(lua_State* L)
 {
 	// dofile(path)
@@ -24,10 +32,6 @@ void script::registerFunctions(lua_State* L)
 	lua_pushcfunction(L, script::prevScene, "prev_scene");
 	lua_setglobal(L, "prev_scene");
 
-	// reset_frame_counter()
-	lua_pushcfunction(L, script::resetFrameCounter, "reset_frame_counter");
-	lua_setglobal(L, "reset_frame_counter");
-
 	// get_fps()
 	lua_pushcfunction(L, script::getFps, "get_fps");
 	lua_setglobal(L, "get_fps");
@@ -35,6 +39,18 @@ void script::registerFunctions(lua_State* L)
 	// set_fps(fps)
 	lua_pushcfunction(L, script::setFps, "set_fps");
 	lua_setglobal(L, "set_fps");
+
+	// reset_frame_counter()
+	lua_pushcfunction(L, script::resetFrameCounter, "reset_frame_counter");
+	lua_setglobal(L, "reset_frame_counter");
+
+	// get_num_strips()
+	lua_pushcfunction(L, script::getNumStrips, "get_num_strips");
+	lua_setglobal(L, "get_num_strips");
+
+	// get_strip(strip)
+	lua_pushcfunction(L, script::getStrip, "get_strip");
+	lua_setglobal(L, "get_strip");
 
 	// clear(r, g, b)
 	// clear(strip, r, g, b)
@@ -57,6 +73,12 @@ void script::registerFunctions(lua_State* L)
 	//   v: [0 .. 1]
 	lua_pushcfunction(L, script::hsv2rgb, "hsv2rgv");
 	lua_setglobal(L, "hsv2rgb");
+
+	// Strip
+	luaL_newmetatable(L, "led-strip");
+	lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
+	luaL_register(L, nullptr, methods_strip);
 }
 
 int script::dofile(lua_State* L)
@@ -149,6 +171,27 @@ int script::resetFrameCounter(lua_State* L)
 {
 	Program::instance->m_frameCount = 0;
 	return 0;
+}
+
+int script::getNumStrips(lua_State* L)
+{
+	lua_pushinteger(L, (int)Program::instance->m_strips.len());
+	return 1;
+}
+
+int script::getStrip(lua_State* L)
+{
+	int i = lua_tointeger(L, 1);
+	if (i >= (int)Program::instance->m_strips.len()) {
+		lua_pushstring(L, "strip index is out of range");
+		lua_error(L);
+		return 0;
+	}
+
+	lua_pushlightuserdata(L, Program::instance->m_strips[i]);
+	luaL_newmetatable(L, "led-strip");
+	lua_setmetatable(L, -2);
+	return 1;
 }
 
 int script::clear(lua_State* L)
@@ -322,4 +365,50 @@ int script::hsv2rgb(lua_State* L)
 	lua_pushnumber(L, g * 255.0);
 	lua_pushnumber(L, b * 255.0);
 	return 3;
+}
+
+int script::strip::clear(lua_State* L)
+{
+	Strip* self = (Strip*)lua_touserdata(L, 1);
+
+	uint8_t r, g, b;
+
+	int n = lua_gettop(L);
+	if (n == 4) {
+		r = (uint8_t)lua_tointeger(L, 2);
+		g = (uint8_t)lua_tointeger(L, 3);
+		b = (uint8_t)lua_tointeger(L, 4);
+
+	} else {
+		lua_pushstring(L, "invalid number of parameters");
+		lua_error(L);
+		return 0;
+	}
+
+	self->clear(r, g, b);
+	return 0;
+}
+
+int script::strip::set(lua_State* L)
+{
+	Strip* self = (Strip*)lua_touserdata(L, 1);
+
+	int pixel;
+	uint8_t r, g, b;
+
+	int n = lua_gettop(L);
+	if (n == 5) {
+		pixel = lua_tointeger(L, 2);
+		r = (uint8_t)lua_tointeger(L, 3);
+		g = (uint8_t)lua_tointeger(L, 4);
+		b = (uint8_t)lua_tointeger(L, 5);
+
+	} else {
+		lua_pushstring(L, "invalid number of parameters");
+		lua_error(L);
+		return 0;
+	}
+
+	self->set(pixel, r, g, b);
+	return 0;
 }

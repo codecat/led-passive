@@ -19,9 +19,18 @@ namespace script
 	int setFps(lua_State* L);
 	int resetFrameCounter(lua_State* L);
 
+	int getNumStrips(lua_State* L);
+	int getStrip(lua_State* L);
+
 	int clear(lua_State* L);
 	int set(lua_State* L);
 	int add(lua_State* L);
 
 	int hsv2rgb(lua_State* L);
+
+	namespace strip
+	{
+		int clear(lua_State* L);
+		int set(lua_State* L);
+	}
 }
