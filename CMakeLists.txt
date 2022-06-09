@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 project(led-passive)
 set(CMAKE_CXX_STANDARD 17)
 
+if (WIN32)
+  add_definitions(-DPLATFORM_WINDOWS)
+else()
+  add_definitions(-DPLATFORM_UNIX)
+endif()
+
 add_executable(led-passive
 	src/main.cpp
 

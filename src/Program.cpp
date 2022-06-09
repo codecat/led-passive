@@ -5,8 +5,12 @@
 #include <lualib.h>
 #include <luacode.h>
 
+#if defined(PLATFORM_WINDOWS)
+#include <Windows.h>
+#else
 #include <unistd.h>
 #include <signal.h>
+#endif
 
 #include <chrono>
 
@@ -58,7 +62,11 @@ void Program::run()
 		}
 
 		float sleepMilliseconds = fpsTargetSleep - frameTime;
+#if defined(PLATFORM_WINDOWS)
+		Sleep((DWORD)sleepMilliseconds);
+#else
 		usleep((useconds_t)(sleepMilliseconds * 1000));
+#endif
 	}
 
 	printf("Clean shutdown\n");
@@ -161,6 +169,13 @@ int Program::runLuaFile(const char* filename)
 
 bool Program::initialize()
 {
+#if defined(PLATFORM_WINDOWS)
+	SetConsoleCtrlHandler([](DWORD dwCtrlType) -> BOOL {
+		printf("Interrupt signal received (%d), stopping..\n", (int)dwCtrlType);
+		Program::instance->m_running = false;
+		return TRUE;
+	}, TRUE);
+#else
 	signal(SIGINT, [](int) {
 		printf("Interrupt signal received, stopping..\n");
 		Program::instance->m_running = false;
@@ -169,6 +184,7 @@ bool Program::initialize()
 		printf("Termination signal received, stopping..\n");
 		Program::instance->m_running = false;
 	});
+#endif
 
 	m_config = cfg::fromFile("config");
 	if (m_config == nullptr) {
